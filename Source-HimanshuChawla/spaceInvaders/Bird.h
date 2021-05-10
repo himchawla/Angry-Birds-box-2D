@@ -4,11 +4,13 @@ class Bird :
 	public sprite
 {
 public:
-	Bird(float x, float y) :sprite(x, y) {};
+	Bird(float x, float y) :sprite(x, y, "Bird") {};
 	int speed;
 	int mass;
 	b2Vec2 getTrajectoryPoint(b2Vec2& startingPosition, b2Vec2& startingVelocity, float n, b2World* world);
-	void update();
+	void update(sf::RenderWindow& _win);
+	void draw(sf::RenderWindow& win);
+	void drawPath(sf::RenderWindow& win);
 	bool CanDO() { return m_canDo; }
 	void CanDo(bool _canDo) { m_canDo = _canDo; }
 

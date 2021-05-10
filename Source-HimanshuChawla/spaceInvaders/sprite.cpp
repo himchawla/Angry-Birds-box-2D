@@ -31,8 +31,9 @@ void sprite::setTexture(std::string t)
 	tx.loadFromFile(t);
 }
 
-sprite::sprite(float x, float y)
+sprite::sprite(float x, float y, std::string _name)
 {
+	Name = _name;
 	alive = true;
 	setLocation(x, y);
 
@@ -87,9 +88,9 @@ void sprite::init(b2World* world, const sf::Vector2f& position, const sf::Vector
 	if(dynamic)
 		bodyDef.type = b2_dynamicBody;
 	
-	bodyDef.position.Set(position.x, position.y);
+	bodyDef.position.Set(position.x, position.y - dim.y);
 	m_body = world->CreateBody(&bodyDef);
-	dimensions = sf::Vector2f(dim.x / 2, dim.y / 2);
+	dimensions = sf::Vector2f(dim.x/2, dim.y/2);
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(dimensions.x, dimensions.y);
 	b2FixtureDef fixtureDef;
@@ -97,6 +98,7 @@ void sprite::init(b2World* world, const sf::Vector2f& position, const sf::Vector
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
 
+	m_world = world;
 	m_fixture = m_body->CreateFixture(&fixtureDef);
 	
 	m_body->SetEnabled(true);

@@ -12,24 +12,27 @@ b2Vec2 Bird::getTrajectoryPoint(b2Vec2& startingPosition, b2Vec2& startingVeloci
 }
 
 
-void Bird::update()
+void Bird::update(sf::RenderWindow& _win)
 {
 	b2Vec2 vel;
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !m_shoot)
 	{
+		
 		for (auto i : m_path)
 		{
 			delete i;
 
 		}
-		m.clear();
+		m_path.clear();
 
 		b2Vec2 position;
 		if (abs(sf::Mouse::getPosition().x - sp.getPosition().x) < 128.0f && abs(sf::Mouse::getPosition().y - sp.getPosition().y) < 128.0f)
 			m_canDo = true;
 
-		vel = b2Vec2((b2Vec2(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y) - position).x / 2.0f, (b2Vec2(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y) - position).y / 2.0f);
 		position = getBody()->GetPosition();
+		vel = b2Vec2((b2Vec2(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y) - position).x / 2.0f, (b2Vec2(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y) - position).y / 2.0f);
+
+		std::cout << vel.x << " " << vel.y << "\n";
 
 		b2RayCastCallback* raycastCallback = nullptr;
 		b2Vec2 lastTP = position;
@@ -44,11 +47,11 @@ void Bird::update()
 		}
 		if (m_canDo)
 		{
-			float t = -2 * vel.y / getWorld()->GetGravity().y;
-			std::cout << t << "\n";
+			float t = -2 * vel.y / 9.81f;
+			//std::cout << t << "\n";
 			for (int i = 0; i < (int)(t * 60); i += 10)
 			{ // three seconds at 60fps
-				sprite* temp = new sprite(0.0f, 0.0f);
+				sprite* temp = new sprite(0.0f, 0.0f, "Path");
 				temp->setTexture("Assets/circle.png");
 
 				//if (i > 0) { //avoid degenerate raycast where start and end point are the same
@@ -64,6 +67,7 @@ void Bird::update()
 				temp->sp.setPosition(trajectoryPosition.x, trajectoryPosition.y);
 				m_path.push_back(temp);
 			}
+			
 		}
 	}
 
@@ -87,4 +91,27 @@ void Bird::update()
 
 	sp.setPosition(sf::Vector2f(getBody()->GetPosition().x - dimensions.x, getBody()->GetPosition().y - dimensions.y));
 	sp.setRotation(getBody()->GetAngle() * 180 / 3.14f);
+	
+
+}
+
+
+
+void Bird::draw(sf::RenderWindow& win)
+{
+	if (alive)
+	{
+		sp.setTexture(tx);
+		win.draw(sp);
+		drawPath(win);
+	}
+}
+
+
+void Bird::drawPath(sf::RenderWindow& win)
+{
+	for (auto i : m_path)
+	{
+		i->draw(win);
+	}
 }

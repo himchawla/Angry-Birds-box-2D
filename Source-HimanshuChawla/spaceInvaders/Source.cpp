@@ -38,7 +38,7 @@ int main()
 
 	std::vector<sprite*> level;
 
-
+	window.setFramerateLimit(240);
 
 	//World Setup
 	b2Vec2 gravity(0.0f, 9.81f);
@@ -67,32 +67,32 @@ int main()
 	newBox.init(m_world, sf::Vector2f(400.0f, 368.0f), sf::Vector2f(64.0f, 64.0f), 1);
 	newBox.setTexture("Assets/bird.png");
 
-	sprite *temp = new sprite(0.0f, 0.0f);
+	sprite *temp = new sprite(0.0f, 0.0f, "Destructable");
 	temp->init(m_world, sf::Vector2f(680.0f, 4.0f), sf::Vector2f(160.0f, 16.0f), 1);
 	//
 	temp->setTexture("Assets/Block.png");
 	temp->sp.setScale(10.0f, 1.0f);
 	level.push_back(temp);
 
-	temp = new sprite(0.0f, 0.0f);
+	temp = new sprite(0.0f, 0.0f, "Indestructable");
 	temp->init(m_world, sf::Vector2f(650.0f, 400.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	temp->sp.setScale(sf::Vector2f(1.0f, 10.0f));
 	temp->setTexture("Assets/Block.png");
 	level.push_back(temp);
 
-	temp = new sprite(0.0f, 0.0f);
+	temp = new sprite(0.0f, 0.0f, "Indestructable");
 	temp->init(m_world, sf::Vector2f(700.0f, 400.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	temp->sp.setScale(sf::Vector2f(1.0f, 10.0f));
 	temp->setTexture("Assets/Block.png");
 	level.push_back(temp);
 
-	sprite* rev1 = new sprite(0.0f,0.0f);
+	sprite* rev1 = new sprite(0.0f,0.0f, "Indestructable");
 	rev1->init(m_world, sf::Vector2f(800.0f, 100.0f), sf::Vector2f(16.0f, 80.0f), 0);
 	rev1->sp.setScale(1.0f, 5.0f);
 	rev1->setTexture("Assets/block.png");
 	level.push_back(rev1);
 	
-	sprite* rev2 = new sprite(0.0f, 0.0f);
+	sprite* rev2 = new sprite(0.0f, 0.0f, "Indestructable");
 	rev2->init(m_world, sf::Vector2f(800.0f, 200.0f), sf::Vector2f(32.0f, 32.0f), 1);
 	rev2->sp.setScale(4.0f, 4.0f);
 	rev2->setTexture("Assets/circle.png");
@@ -161,7 +161,7 @@ int main()
 		//ground.getBody()->SetLinearVelocity(b2Vec2(0.0f,0.0f));
 
 		
-		newBox.update();
+		newBox.update(window);
 		newBox.draw(window);
 		for (auto i : level)
 		{
