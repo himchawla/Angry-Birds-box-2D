@@ -11,13 +11,13 @@ public:
 	void update(float _dT);
 	void draw(sf::RenderWindow& win);
 	void drawPath(sf::RenderWindow& win);
+	void destroy(int time);
 	bool CanDO() { return m_canDo; }
 	void CanDo(bool _canDo) { m_canDo = _canDo; }
 
 	bool Shoot() { return m_shoot; }
 	void Shoot(bool _shoot) { m_shoot = _shoot; }
 	
-	void destroy();
 
 	enum eAbility
 	{

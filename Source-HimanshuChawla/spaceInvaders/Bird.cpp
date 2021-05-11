@@ -110,7 +110,7 @@ void Bird::update(float _dT)
 		}
 		m_path.clear();
 		//newBox->getBody()->SetLinearVelocity(b2Vec2(10.0f, newBox->getBody()->GetLinearVelocity().y));
-		if (vel.Length() > 15.0f)
+		if (vel.Length() > 15.0f && vel.Length() < 1000.0f)
 		{
 			m_shoot = true;
 			std::cout << vel.Length();
@@ -147,8 +147,16 @@ void Bird::drawPath(sf::RenderWindow& win)
 	}
 }
 
-void Bird::destroy()
+void Bird::destroy(int time)
 {
-	m_destroy = true;
-	m_timer = 3.0f;
+	if (!m_destroy)
+	{
+		m_destroy = true;
+		m_timer = time;
+	}
+	else if (m_timer > time)
+	{
+		m_timer = time;
+	}
+
 }

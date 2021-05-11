@@ -27,7 +27,7 @@
 class sprite
 {
 public:
-    float health = 1500.0f;
+    float health = 2500.0f;
     float x, y, dx, dy, w, h;
     void destroy();
     void revive();

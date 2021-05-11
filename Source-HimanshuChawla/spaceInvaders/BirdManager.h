@@ -38,13 +38,18 @@ public:
 				break;
 			}
 			
-			temp->init(_world, sf::Vector2f(m_activeBirdPosition.x - 20.0f * i, m_activeBirdPosition.y), sf::Vector2f(0.0f, 0.0f), 1);
+			temp->init(_world, sf::Vector2f(m_activeBirdPosition.x - 30.0f * i, m_activeBirdPosition.y), sf::Vector2f(0.0f, 0.0f), 1);
 			temp->m_ability = _ability[i];
 			temp->sp.setPosition(sf::Vector2f(temp->getBody()->GetPosition().x * 4.0f, temp->getBody()->GetPosition().y * 4.0f));
 			temp->sp.setRotation(temp->getBody()->GetAngle() * 180 / 3.14f);
 
 			birds.push_back(temp);
 		}
+	}
+
+	int getSize()
+	{
+		return birds.size();
 	}
 
 	void update(float _dt)
