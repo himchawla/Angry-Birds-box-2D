@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+
 #ifndef B2_SETTINGS_H
 #define B2_SETTINGS_H
 
@@ -41,7 +42,6 @@
 
 #include <stdarg.h>
 #include <stdint.h>
-
 // Tunable Constants
 
 /// You can use this to change the length scale used by your game.
@@ -57,6 +57,7 @@
 /// You can define this to inject whatever data you want in b2Body
 struct B2_API b2BodyUserData
 {
+
 	b2BodyUserData()
 	{
 		pointer = 0;

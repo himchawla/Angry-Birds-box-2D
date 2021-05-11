@@ -29,6 +29,8 @@ void sprite::setLocation(float x, float y)
 void sprite::setTexture(std::string t)
 {
 	tx.loadFromFile(t);
+	sp.setOrigin(tx.getSize().x * 0.5f, tx.getSize().y * 0.5f);
+	sp.setTexture(tx);
 }
 
 sprite::sprite(float x, float y, std::string _name)
@@ -48,7 +50,7 @@ void sprite::draw(sf::RenderWindow& win)
 {
 	if (alive)
 	{
-		sp.setTexture(tx);
+		
 		win.draw(sp);
 	}
 }
@@ -79,7 +81,6 @@ void sprite::destroy()
 
 sprite::~sprite()
 {
-	
 }
 
 void sprite::init(b2World* world, const sf::Vector2f& position, const sf::Vector2f& dim, bool dynamic)
@@ -88,9 +89,9 @@ void sprite::init(b2World* world, const sf::Vector2f& position, const sf::Vector
 	if(dynamic)
 		bodyDef.type = b2_dynamicBody;
 	
-	bodyDef.position.Set(position.x, position.y - dim.y);
+	bodyDef.position.Set(position.x, position.y);
 	m_body = world->CreateBody(&bodyDef);
-	dimensions = sf::Vector2f(dim.x/2, dim.y/2);
+	dimensions = sf::Vector2f((sp.getTexture()->getSize().x * sp.getScale().x) / 8, (sp.getTexture()->getSize().y * sp.getScale().y) / 8);
 	b2PolygonShape boxShape;
 	boxShape.SetAsBox(dimensions.x, dimensions.y);
 	b2FixtureDef fixtureDef;
@@ -98,14 +99,19 @@ void sprite::init(b2World* world, const sf::Vector2f& position, const sf::Vector
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
 
+
 	m_world = world;
 	m_fixture = m_body->CreateFixture(&fixtureDef);
 	
-	m_body->SetEnabled(true);
+	//m_body->SetEnabled(true);
+	m_body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
 }
 
 void sprite::update()
 {
-	sp.setPosition(sf::Vector2f(m_body->GetPosition().x - dimensions.x, m_body->GetPosition().y - dimensions.y));
-	sp.setRotation(m_body->GetAngle() * 180 / 3.14f);
+	if (m_body->IsEnabled())
+	{
+		sp.setPosition(sf::Vector2f(m_body->GetPosition().x * 4.0f, m_body->GetPosition().y * 4.0f));
+		sp.setRotation(m_body->GetAngle() * 180 / 3.14f);
+	}
 }

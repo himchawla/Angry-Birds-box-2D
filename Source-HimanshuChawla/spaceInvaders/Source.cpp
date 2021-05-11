@@ -4,7 +4,7 @@
 #include"sprite.h"
 #include "Bird.h" 
 #include<math.h>
-
+#include"ContactListener.h"
 
 class TrajectoryRayCastClosestCallback : public b2RayCastCallback
 {
@@ -33,6 +33,8 @@ int main()
 {
 	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML");
 
+	ContactListener m_contactListener;
+
 	sf::Clock dClock;
 	b2World* m_world;
 
@@ -44,11 +46,14 @@ int main()
 	b2Vec2 gravity(0.0f, 9.81f);
 	m_world = new b2World(gravity);
 
+
 	//Ground
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(960.0f, 400.0f);
+	groundBodyDef.position.Set(240.0f, 100.0f);
 
 	b2Body* groundBody = m_world->CreateBody(&groundBodyDef);
+
+	//groundBody->GetUserData().data = nullptr;
 
 	std::cout << m_world->GetBodyCount()<<"\n";
 	//Ground Fixture
@@ -63,39 +68,39 @@ int main()
 	groundBody->CreateFixture(&fixtureDef);
 	
 
-	Bird newBox(400.0f, 400.0f);
-	newBox.init(m_world, sf::Vector2f(400.0f, 368.0f), sf::Vector2f(64.0f, 64.0f), 1);
+	Bird newBox(800.0f, 400.0f);
 	newBox.setTexture("Assets/bird.png");
+	newBox.init(m_world, sf::Vector2f(50.0f, 95.0f), sf::Vector2f(32.0f, 32.0f), 1);
 
-	sprite *temp = new sprite(0.0f, 0.0f, "Destructable");
-	temp->init(m_world, sf::Vector2f(680.0f, 4.0f), sf::Vector2f(160.0f, 16.0f), 1);
-	//
+	sprite *temp = new sprite(0.0f, 0.0f, "Indestructable");
 	temp->setTexture("Assets/Block.png");
 	temp->sp.setScale(10.0f, 1.0f);
+	temp->init(m_world, sf::Vector2f(170.0f, 4.0f), sf::Vector2f(160.0f, 16.0f), 1);
+	//
 	level.push_back(temp);
 
-	temp = new sprite(0.0f, 0.0f, "Indestructable");
-	temp->init(m_world, sf::Vector2f(650.0f, 400.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	temp = new sprite(0.0f, 0.0f, "Destructable");
 	temp->sp.setScale(sf::Vector2f(1.0f, 10.0f));
 	temp->setTexture("Assets/Block.png");
+	temp->init(m_world, sf::Vector2f(162.5f, 100.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	level.push_back(temp);
 
-	temp = new sprite(0.0f, 0.0f, "Indestructable");
-	temp->init(m_world, sf::Vector2f(700.0f, 400.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	temp = new sprite(0.0f, 0.0f, "Destructable");
 	temp->sp.setScale(sf::Vector2f(1.0f, 10.0f));
 	temp->setTexture("Assets/Block.png");
+	temp->init(m_world, sf::Vector2f(175.0f, 100.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	level.push_back(temp);
 
 	sprite* rev1 = new sprite(0.0f,0.0f, "Indestructable");
-	rev1->init(m_world, sf::Vector2f(800.0f, 100.0f), sf::Vector2f(16.0f, 80.0f), 0);
 	rev1->sp.setScale(1.0f, 5.0f);
 	rev1->setTexture("Assets/block.png");
+	rev1->init(m_world, sf::Vector2f(200.0f, 25.0f), sf::Vector2f(16.0f, 80.0f), 0);
 	level.push_back(rev1);
 	
 	sprite* rev2 = new sprite(0.0f, 0.0f, "Indestructable");
-	rev2->init(m_world, sf::Vector2f(800.0f, 200.0f), sf::Vector2f(32.0f, 32.0f), 1);
 	rev2->sp.setScale(4.0f, 4.0f);
 	rev2->setTexture("Assets/circle.png");
+	rev2->init(m_world, sf::Vector2f(200.0f, 50.0f), sf::Vector2f(32.0f, 32.0f), 1);
 	level.push_back(rev2);
 
 //	rev1.getBody()->SetGravityScale(0.0f);
@@ -105,7 +110,7 @@ int main()
 
 	revoluteJointDef.Initialize(rev1->getBody(), rev2->getBody(), rev1->getBody()->GetWorldCenter());
 
-	revoluteJointDef.motorSpeed = 3.14 * 2.0f;
+	revoluteJointDef.motorSpeed = 0.0f * 2.0f;
 	revoluteJointDef.maxMotorTorque = 1000.0f;
 	revoluteJointDef.enableMotor = true;
 	
@@ -143,6 +148,7 @@ int main()
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 		{
+			window.close();
 			main();
 		}
 
@@ -157,17 +163,29 @@ int main()
 			m_world->Step(step, v, pos);
 
 		}
+		m_world->SetContactListener(&m_contactListener);
+
 
 		//ground.getBody()->SetLinearVelocity(b2Vec2(0.0f,0.0f));
 
 		
 		newBox.update(window);
 		newBox.draw(window);
-		for (auto i : level)
+		std::vector<sprite*>::iterator it = level.begin();
+		while (it != level.end())
 		{
-			i->update();
-			i->draw(window);
+			if (!(*it)->alive)
+			{
+				m_world->DestroyBody((*it)->getBody());
+				delete (*it);
+				level.erase(it);
+				break;
+			}
+				(*it)->update();
+			(*it)->draw(window);
+			it++;
 		}
+		
 		window.display();
 	
 	}

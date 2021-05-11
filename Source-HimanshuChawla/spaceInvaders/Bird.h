@@ -5,7 +5,7 @@ class Bird :
 {
 public:
 	Bird(float x, float y) :sprite(x, y, "Bird") {};
-	int speed;
+	float m_speed = 100.0f;
 	int mass;
 	b2Vec2 getTrajectoryPoint(b2Vec2& startingPosition, b2Vec2& startingVelocity, float n, b2World* world);
 	void update(sf::RenderWindow& _win);
