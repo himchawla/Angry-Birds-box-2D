@@ -12,9 +12,40 @@ b2Vec2 Bird::getTrajectoryPoint(b2Vec2& startingPosition, b2Vec2& startingVeloci
 }
 
 
-void Bird::update(sf::RenderWindow& _win)
+void Bird::update(float _dT)
 {
 	b2Vec2 vel;
+	m_timer -= _dT;
+	if (m_destroy && m_timer <= 0.0f)
+	{
+		alive = false;
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && m_shoot && m_active)
+	{
+		switch (m_ability)
+		{
+		case Bird::chuck:
+		{
+			getBody()->SetLinearVelocity(b2Vec2((getBody()->GetLinearVelocity()).x * 5.0f, (getBody()->GetLinearVelocity()).y * 5.0f));
+			getBody()->SetGravityScale(0.0f);
+			m_ability = none;
+		}
+			break;
+		case Bird::fall:
+		{
+			getBody()->SetLinearVelocity(b2Vec2(0.0f, 100.0f));
+			
+			m_ability = none;
+		}
+		
+		case Bird::none:
+			break;
+		default:
+			break;
+		}
+	}
+	
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !m_shoot)
 	{
 		
@@ -30,7 +61,7 @@ void Bird::update(sf::RenderWindow& _win)
 			m_canDo = true;
 
 		position = getBody()->GetPosition();
-		vel = b2Vec2((b2Vec2(sf::Mouse::getPosition().x /4.0f, sf::Mouse::getPosition().y / 4.0f) - position).x / 2.0f, (b2Vec2(sf::Mouse::getPosition().x/4.0f, sf::Mouse::getPosition().y/4.0f) - position).y / 2.0f);
+		vel = b2Vec2((b2Vec2(sf::Mouse::getPosition().x /4.0f, sf::Mouse::getPosition().y / 4.0f) - position).x * 3.0f, (b2Vec2(sf::Mouse::getPosition().x/4.0f, sf::Mouse::getPosition().y/4.0f) - position).y * 3.0f);
 
 		std::cout << vel.x << " " << vel.y << "\n";
 
@@ -78,7 +109,7 @@ void Bird::update(sf::RenderWindow& _win)
 
 		}
 		m_path.clear();
-		//newBox.getBody()->SetLinearVelocity(b2Vec2(10.0f, newBox.getBody()->GetLinearVelocity().y));
+		//newBox->getBody()->SetLinearVelocity(b2Vec2(10.0f, newBox->getBody()->GetLinearVelocity().y));
 		if (vel.Length() > 15.0f)
 		{
 			m_shoot = true;
@@ -114,4 +145,10 @@ void Bird::drawPath(sf::RenderWindow& win)
 	{
 		i->draw(win);
 	}
+}
+
+void Bird::destroy()
+{
+	m_destroy = true;
+	m_timer = 3.0f;
 }

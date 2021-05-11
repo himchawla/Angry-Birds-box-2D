@@ -5,10 +5,10 @@ class Bird :
 {
 public:
 	Bird(float x, float y) :sprite(x, y, "Bird") {};
-	float m_speed = 100.0f;
+	float m_speed = 60.0f;
 	int mass;
 	b2Vec2 getTrajectoryPoint(b2Vec2& startingPosition, b2Vec2& startingVelocity, float n, b2World* world);
-	void update(sf::RenderWindow& _win);
+	void update(float _dT);
 	void draw(sf::RenderWindow& win);
 	void drawPath(sf::RenderWindow& win);
 	bool CanDO() { return m_canDo; }
@@ -17,12 +17,18 @@ public:
 	bool Shoot() { return m_shoot; }
 	void Shoot(bool _shoot) { m_shoot = _shoot; }
 	
+	void destroy();
+
 	enum eAbility
 	{
 		chuck,
+		fall,
 		none
-	}m_ability;
+	}m_ability = fall;
 private:
+	float m_timer = 0.0f;
+	bool m_destroy = false;
+	bool m_active = true;
 	bool m_canDo = false;
 	bool m_shoot = false;
 

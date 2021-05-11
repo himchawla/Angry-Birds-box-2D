@@ -2,9 +2,11 @@
 #include <SFML/Graphics.hpp>
 #include <box2d/box2d.h>
 #include"sprite.h"
-#include "Bird.h" 
+#include "BirdManager.h" 
+#include "Enemy.h"
 #include<math.h>
 #include"ContactListener.h"
+
 
 class TrajectoryRayCastClosestCallback : public b2RayCastCallback
 {
@@ -28,6 +30,72 @@ public:
 	b2Vec2 m_normal;
 };
 
+void loadLevel1(std::vector<sprite*>& level, std::vector<Enemy*>& enemies, b2World* m_world)
+{
+	sprite* temp = new sprite(0.0f, 0.0f, "Indestructable");
+	temp->setTexture("Assets/Block.png");
+	temp->sp.setScale(20.0f, 1.0f);
+	temp->init(m_world, sf::Vector2f(170.0f, 200.0f), sf::Vector2f(160.0f, 16.0f), 1);
+	//
+	level.push_back(temp);
+
+	temp = new sprite(0.0f, 0.0f, "Destructable");
+	temp->sp.setScale(sf::Vector2f(2.0f, 10.0f));
+	temp->setTexture("Assets/Block.png");
+	temp->init(m_world, sf::Vector2f(150.5f, 220.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	level.push_back(temp);
+
+	temp = new sprite(0.0f, 0.0f, "Destructable");
+	temp->sp.setScale(sf::Vector2f(2.0f, 10.0f));
+	temp->setTexture("Assets/Block.png");
+	temp->init(m_world, sf::Vector2f(180.5f, 220.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	level.push_back(temp);
+
+	temp = new sprite(0.0f, 0.0f, "Destructable");
+	temp->sp.setScale(sf::Vector2f(2.0f, 10.0f));
+	temp->setTexture("Assets/Block.png");
+	temp->init(m_world, sf::Vector2f(200.0f, 220.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	level.push_back(temp);
+
+	sprite* rev1 = new sprite(0.0f, 0.0f, "Indestructable");
+	rev1->sp.setScale(1.0f, 5.0f);
+	rev1->setTexture("Assets/block.png");
+	rev1->init(m_world, sf::Vector2f(350.0f, 25.0f), sf::Vector2f(16.0f, 80.0f), 0);
+	level.push_back(rev1);
+
+	sprite* rev2 = new sprite(0.0f, 0.0f, "Indestructable");
+	rev2->sp.setScale(4.0f, 4.0f);
+	rev2->setTexture("Assets/circle.png");
+	rev2->init(m_world, sf::Vector2f(350.0f, 50.0f), sf::Vector2f(32.0f, 32.0f), 1);
+	level.push_back(rev2);
+
+	Enemy* tempEnemy = new Enemy("");
+	tempEnemy->setTexture("Assets/enemy.png");
+	tempEnemy->sp.setScale(64.0f / tempEnemy->sp.getTexture()->getSize().x, 64.0f / tempEnemy->sp.getTexture()->getSize().y);
+	tempEnemy->sp.setOrigin(tempEnemy->sp.getTexture()->getSize().x * 0.5f, tempEnemy->sp.getTexture()->getSize().y * 0.5f);
+	tempEnemy->init(m_world, sf::Vector2f(168.5f, 200.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	enemies.push_back(tempEnemy);
+
+	tempEnemy = new Enemy("");
+	tempEnemy->setTexture("Assets/enemy.png");
+	tempEnemy->sp.setScale(64.0f / tempEnemy->sp.getTexture()->getSize().x, 64.0f / tempEnemy->sp.getTexture()->getSize().y);
+	tempEnemy->sp.setOrigin(tempEnemy->sp.getTexture()->getSize().x * 0.5f, tempEnemy->sp.getTexture()->getSize().y * 0.5f);
+	tempEnemy->init(m_world, sf::Vector2f(238.5f, 200.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	enemies.push_back(tempEnemy);
+	//	rev1.getBody()->SetGravityScale(0.0f);
+		//rev2.getBody()->SetGravityScale(0.0f);
+
+	b2RevoluteJointDef revoluteJointDef;
+
+	revoluteJointDef.Initialize(rev1->getBody(), rev2->getBody(), rev1->getBody()->GetWorldCenter());
+
+	revoluteJointDef.motorSpeed = 3.14f * 2.0f;
+	revoluteJointDef.maxMotorTorque = 1000.0f;
+	revoluteJointDef.enableMotor = true;
+
+	b2Joint* joint = m_world->CreateJoint(&revoluteJointDef);
+}
+
 
 int main()
 {
@@ -39,7 +107,7 @@ int main()
 	b2World* m_world;
 
 	std::vector<sprite*> level;
-
+	std::vector<Enemy*> enemies;
 	window.setFramerateLimit(240);
 
 	//World Setup
@@ -49,11 +117,11 @@ int main()
 
 	//Ground
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(240.0f, 100.0f);
+	groundBodyDef.position.Set(240.0f, 240.0f);
 
 	b2Body* groundBody = m_world->CreateBody(&groundBodyDef);
 
-	//groundBody->GetUserData().data = nullptr;
+	groundBody->GetUserData().pointer = 0;
 
 	std::cout << m_world->GetBodyCount()<<"\n";
 	//Ground Fixture
@@ -67,54 +135,12 @@ int main()
 	fixtureDef.friction = 1.0f;
 	groundBody->CreateFixture(&fixtureDef);
 	
+	Bird::eAbility abilities[3] = {Bird::none, Bird::chuck, Bird::fall};
+	BirdManager* bird = new BirdManager(3, m_world, sf::Vector2f(50.0f, 232.0f), &abilities[0]);
 
-	Bird newBox(800.0f, 400.0f);
-	newBox.setTexture("Assets/bird.png");
-	newBox.init(m_world, sf::Vector2f(50.0f, 95.0f), sf::Vector2f(32.0f, 32.0f), 1);
-
-	sprite *temp = new sprite(0.0f, 0.0f, "Indestructable");
-	temp->setTexture("Assets/Block.png");
-	temp->sp.setScale(10.0f, 1.0f);
-	temp->init(m_world, sf::Vector2f(170.0f, 4.0f), sf::Vector2f(160.0f, 16.0f), 1);
-	//
-	level.push_back(temp);
-
-	temp = new sprite(0.0f, 0.0f, "Destructable");
-	temp->sp.setScale(sf::Vector2f(1.0f, 10.0f));
-	temp->setTexture("Assets/Block.png");
-	temp->init(m_world, sf::Vector2f(162.5f, 100.0f), sf::Vector2f(16.0f, 160.0f), 1);
-	level.push_back(temp);
-
-	temp = new sprite(0.0f, 0.0f, "Destructable");
-	temp->sp.setScale(sf::Vector2f(1.0f, 10.0f));
-	temp->setTexture("Assets/Block.png");
-	temp->init(m_world, sf::Vector2f(175.0f, 100.0f), sf::Vector2f(16.0f, 160.0f), 1);
-	level.push_back(temp);
-
-	sprite* rev1 = new sprite(0.0f,0.0f, "Indestructable");
-	rev1->sp.setScale(1.0f, 5.0f);
-	rev1->setTexture("Assets/block.png");
-	rev1->init(m_world, sf::Vector2f(200.0f, 25.0f), sf::Vector2f(16.0f, 80.0f), 0);
-	level.push_back(rev1);
 	
-	sprite* rev2 = new sprite(0.0f, 0.0f, "Indestructable");
-	rev2->sp.setScale(4.0f, 4.0f);
-	rev2->setTexture("Assets/circle.png");
-	rev2->init(m_world, sf::Vector2f(200.0f, 50.0f), sf::Vector2f(32.0f, 32.0f), 1);
-	level.push_back(rev2);
-
-//	rev1.getBody()->SetGravityScale(0.0f);
-	//rev2.getBody()->SetGravityScale(0.0f);
-
-	b2RevoluteJointDef revoluteJointDef;
-
-	revoluteJointDef.Initialize(rev1->getBody(), rev2->getBody(), rev1->getBody()->GetWorldCenter());
-
-	revoluteJointDef.motorSpeed = 0.0f * 2.0f;
-	revoluteJointDef.maxMotorTorque = 1000.0f;
-	revoluteJointDef.enableMotor = true;
+	loadLevel1(level, enemies, m_world);
 	
-	b2Joint *joint =  m_world->CreateJoint(&revoluteJointDef);
 
 	float timeStep = 1.0f / 60.0f;
 	int32 v = 6;
@@ -168,9 +194,11 @@ int main()
 
 		//ground.getBody()->SetLinearVelocity(b2Vec2(0.0f,0.0f));
 
+		bird->update(dt);
+
+		bird->draw(window);
+
 		
-		newBox.update(window);
-		newBox.draw(window);
 		std::vector<sprite*>::iterator it = level.begin();
 		while (it != level.end())
 		{
@@ -185,17 +213,24 @@ int main()
 			(*it)->draw(window);
 			it++;
 		}
+
+		std::vector<Enemy*>::iterator i = enemies.begin();
+		while (i != enemies.end())
+		{
+			if (!(*i)->alive)
+			{
+				m_world->DestroyBody((*i)->getBody());
+				delete (*i);
+				enemies.erase(i);
+				break;
+			}
+			(*i)->update();
+			(*i)->draw(window);
+			i++;
+		}
 		
 		window.display();
 	
 	}
 
 }
-
-
-
-void mousePressed()
-{
-
-}
-
