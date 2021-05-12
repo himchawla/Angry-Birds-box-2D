@@ -34,7 +34,7 @@ void loadLevel1(std::vector<sprite*>& level, std::vector<Enemy*>& enemies, b2Wor
 {
 	sprite* temp = new sprite(0.0f, 0.0f, "Indestructable");
 	temp->setTexture("Assets/Block.png");
-	temp->sp.setScale(20.0f, 1.0f);
+	temp->sp.setScale(30.0f, 1.0f);
 	temp->init(m_world, sf::Vector2f(170.0f, 200.0f), sf::Vector2f(160.0f, 16.0f), 1);
 	//
 	level.push_back(temp);
@@ -42,7 +42,7 @@ void loadLevel1(std::vector<sprite*>& level, std::vector<Enemy*>& enemies, b2Wor
 	temp = new sprite(0.0f, 0.0f, "Destructable");
 	temp->sp.setScale(sf::Vector2f(2.0f, 10.0f));
 	temp->setTexture("Assets/Block.png");
-	temp->init(m_world, sf::Vector2f(150.5f, 220.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	temp->init(m_world, sf::Vector2f(140.5f, 220.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	level.push_back(temp);
 
 	temp = new sprite(0.0f, 0.0f, "Destructable");
@@ -54,7 +54,7 @@ void loadLevel1(std::vector<sprite*>& level, std::vector<Enemy*>& enemies, b2Wor
 	temp = new sprite(0.0f, 0.0f, "Destructable");
 	temp->sp.setScale(sf::Vector2f(2.0f, 10.0f));
 	temp->setTexture("Assets/Block.png");
-	temp->init(m_world, sf::Vector2f(200.0f, 220.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	temp->init(m_world, sf::Vector2f(220.0f, 220.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	level.push_back(temp);
 
 	sprite* rev1 = new sprite(0.0f, 0.0f, "Indestructable");
@@ -69,18 +69,49 @@ void loadLevel1(std::vector<sprite*>& level, std::vector<Enemy*>& enemies, b2Wor
 	rev2->init(m_world, sf::Vector2f(350.0f, 50.0f), sf::Vector2f(32.0f, 32.0f), 1);
 	level.push_back(rev2);
 
+	sprite* motor1 = new sprite(0.0f, 0.0f, "Indestructable");
+	motor1->setTexture("Assets/Block.png");
+	motor1->sp.setScale(25.0f, 1.0f);
+	motor1->init(m_world, sf::Vector2f(320.0f, 160.0f), sf::Vector2f(160.0f, 16.0f), 1);
+	motor1->getBody()->SetGravityScale(0.0f);
+	//
+	level.push_back(motor1);
+
+	sprite* motor2 = new sprite(0.0f, 0.0f, "Indestructable");
+	motor2->sp.setScale(1.0f, 5.0f);
+	motor2->setTexture("Assets/block.png");
+	motor2->init(m_world, sf::Vector2f(320.0f, 250.0f), sf::Vector2f(16.0f, 80.0f), 0);
+	level.push_back(motor2);
+
+	
+
+	b2MotorJointDef mjd;
+	mjd.Initialize(motor2->getBody(), motor1->getBody());
+	mjd.maxForce = 1000.0f;
+	
+	mjd.maxTorque = 1000.0f;
+	b2Joint* m_joint = m_world->CreateJoint(&mjd);
+
+
 	Enemy* tempEnemy = new Enemy("");
 	tempEnemy->setTexture("Assets/enemy.png");
 	tempEnemy->sp.setScale(64.0f / tempEnemy->sp.getTexture()->getSize().x, 64.0f / tempEnemy->sp.getTexture()->getSize().y);
 	tempEnemy->sp.setOrigin(tempEnemy->sp.getTexture()->getSize().x * 0.5f, tempEnemy->sp.getTexture()->getSize().y * 0.5f);
-	tempEnemy->init(m_world, sf::Vector2f(168.5f, 200.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	tempEnemy->init(m_world, sf::Vector2f(160.5f, 200.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	enemies.push_back(tempEnemy);
 
 	tempEnemy = new Enemy("");
 	tempEnemy->setTexture("Assets/enemy.png");
 	tempEnemy->sp.setScale(64.0f / tempEnemy->sp.getTexture()->getSize().x, 64.0f / tempEnemy->sp.getTexture()->getSize().y);
 	tempEnemy->sp.setOrigin(tempEnemy->sp.getTexture()->getSize().x * 0.5f, tempEnemy->sp.getTexture()->getSize().y * 0.5f);
-	tempEnemy->init(m_world, sf::Vector2f(238.5f, 200.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	tempEnemy->init(m_world, sf::Vector2f(200.0f, 200.0f), sf::Vector2f(16.0f, 160.0f), 1);
+	enemies.push_back(tempEnemy);
+
+	tempEnemy = new Enemy("");
+	tempEnemy->setTexture("Assets/enemy.png");
+	tempEnemy->sp.setScale(64.0f / tempEnemy->sp.getTexture()->getSize().x, 64.0f / tempEnemy->sp.getTexture()->getSize().y);
+	tempEnemy->sp.setOrigin(tempEnemy->sp.getTexture()->getSize().x * 0.5f, tempEnemy->sp.getTexture()->getSize().y * 0.5f);
+	tempEnemy->init(m_world, sf::Vector2f(180.0f, 180.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	enemies.push_back(tempEnemy);
 	//	rev1.getBody()->SetGravityScale(0.0f);
 		//rev2.getBody()->SetGravityScale(0.0f);
