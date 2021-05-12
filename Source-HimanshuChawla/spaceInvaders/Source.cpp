@@ -30,7 +30,7 @@ public:
 	b2Vec2 m_normal;
 };
 
-void loadLevel1(std::vector<sprite*>& level, std::vector<Enemy*>& enemies, b2World* m_world)
+void loadLevel1(std::vector<sprite*>& level, std::vector<Enemy*>& enemies, b2World* m_world, BirdManager* &_birds)
 {
 	sprite* temp = new sprite(0.0f, 0.0f, "Indestructable");
 	temp->setTexture("Assets/Block.png");
@@ -125,11 +125,20 @@ void loadLevel1(std::vector<sprite*>& level, std::vector<Enemy*>& enemies, b2Wor
 	revoluteJointDef.enableMotor = true;
 
 	b2Joint* joint = m_world->CreateJoint(&revoluteJointDef);
+
+	
+	Bird::eAbility abilities[3] = { Bird::none, Bird::chuck, Bird::fall };
+
+
+	BirdManager* tempBirds = new BirdManager(3, m_world, sf::Vector2f(50.0f, 232.0f), &abilities[0]);
+	
+	_birds = tempBirds;
 }
 
 
 int main()
 {
+	int currLevel = 1;
 	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML");
 
 	ContactListener m_contactListener;
@@ -166,11 +175,10 @@ int main()
 	fixtureDef.friction = 1.0f;
 	groundBody->CreateFixture(&fixtureDef);
 	
-	Bird::eAbility abilities[3] = {Bird::none, Bird::chuck, Bird::fall};
-	BirdManager* bird = new BirdManager(3, m_world, sf::Vector2f(50.0f, 232.0f), &abilities[0]);
+	BirdManager* bird = nullptr;
 
 	
-	loadLevel1(level, enemies, m_world);
+	loadLevel1(level, enemies, m_world, bird);
 	
 
 	float timeStep = 1.0f / 60.0f;
@@ -221,6 +229,22 @@ int main()
 
 		}
 		m_world->SetContactListener(&m_contactListener);
+
+
+#pragma region LevelProgress
+
+		if (currLevel == 1 && enemies.size() == 0)
+		{
+			exit(0);
+		}
+
+		if (currLevel == 1 && bird->getSize() == 0)
+		{
+			exit(-1);
+		}
+
+#pragma endregion
+
 
 
 		//ground.getBody()->SetLinearVelocity(b2Vec2(0.0f,0.0f));
