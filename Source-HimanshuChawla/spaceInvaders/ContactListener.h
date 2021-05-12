@@ -87,7 +87,7 @@ class ContactListener : public b2ContactListener
 				if (s1->Name == "Bird")
 				{
 					if (reinterpret_cast<Bird*>(s1)->Shoot())
-						reinterpret_cast<Bird*>(s1)->destroy(10);
+						reinterpret_cast<Bird*>(s1)->destroy(20);
 					if (s1->getBody()->GetGravityScale() == 0.0f)
 						s1->getBody()->SetGravityScale(1.0f);
 				}
@@ -129,7 +129,7 @@ class ContactListener : public b2ContactListener
 				if (s2->Name == "Bird")
 				{
 					if (reinterpret_cast<Bird*>(s2)->Shoot())
-						reinterpret_cast<Bird*>(s2)->destroy(10);
+						reinterpret_cast<Bird*>(s2)->destroy(20);
 					if (s2->getBody()->GetGravityScale() == 0.0f)
 						s2->getBody()->SetGravityScale(1.0f);
 				}

@@ -94,23 +94,14 @@ void loadLevel1(std::vector<sprite*>& level, std::vector<Enemy*>& enemies, b2Wor
 
 
 	Enemy* tempEnemy = new Enemy("");
-	tempEnemy->setTexture("Assets/enemy.png");
-	tempEnemy->sp.setScale(64.0f / tempEnemy->sp.getTexture()->getSize().x, 64.0f / tempEnemy->sp.getTexture()->getSize().y);
-	tempEnemy->sp.setOrigin(tempEnemy->sp.getTexture()->getSize().x * 0.5f, tempEnemy->sp.getTexture()->getSize().y * 0.5f);
 	tempEnemy->init(m_world, sf::Vector2f(160.5f, 200.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	enemies.push_back(tempEnemy);
 
 	tempEnemy = new Enemy("");
-	tempEnemy->setTexture("Assets/enemy.png");
-	tempEnemy->sp.setScale(64.0f / tempEnemy->sp.getTexture()->getSize().x, 64.0f / tempEnemy->sp.getTexture()->getSize().y);
-	tempEnemy->sp.setOrigin(tempEnemy->sp.getTexture()->getSize().x * 0.5f, tempEnemy->sp.getTexture()->getSize().y * 0.5f);
 	tempEnemy->init(m_world, sf::Vector2f(200.0f, 200.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	enemies.push_back(tempEnemy);
 
 	tempEnemy = new Enemy("");
-	tempEnemy->setTexture("Assets/enemy.png");
-	tempEnemy->sp.setScale(64.0f / tempEnemy->sp.getTexture()->getSize().x, 64.0f / tempEnemy->sp.getTexture()->getSize().y);
-	tempEnemy->sp.setOrigin(tempEnemy->sp.getTexture()->getSize().x * 0.5f, tempEnemy->sp.getTexture()->getSize().y * 0.5f);
 	tempEnemy->init(m_world, sf::Vector2f(180.0f, 180.0f), sf::Vector2f(16.0f, 160.0f), 1);
 	enemies.push_back(tempEnemy);
 	//	rev1.getBody()->SetGravityScale(0.0f);
@@ -148,7 +139,7 @@ int main()
 
 	std::vector<sprite*> level;
 	std::vector<Enemy*> enemies;
-	window.setFramerateLimit(240);
+	//window.setFramerateLimit(60);
 
 	//World Setup
 	b2Vec2 gravity(0.0f, 9.81f);
@@ -218,16 +209,7 @@ int main()
 		}
 
 
-		if (1)
-		{
-			static const double step = 1.0 / 60.0f;
-			static double accumulator = 0.0;
-
-			// max frame time to avoid spiral of death
-
-			m_world->Step(step, v, pos);
-
-		}
+		
 		m_world->SetContactListener(&m_contactListener);
 
 
@@ -283,7 +265,18 @@ int main()
 			(*i)->draw(window);
 			i++;
 		}
-		
+
+		if (1)
+		{
+			float timeStep = 1 / 60.0;      //the length of time passed to simulate (seconds)
+			int32 velocityIterations = 8;   //how strongly to correct velocity
+			int32 positionIterations = 3;   //how strongly to correct position
+
+			m_world->Step(timeStep, velocityIterations, positionIterations);
+
+		}
+
+
 		window.display();
 	
 	}
