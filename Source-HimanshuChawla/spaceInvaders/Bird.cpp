@@ -1,3 +1,19 @@
+// 
+//  Bachelor of Software Engineering 
+//  Media Design School 
+//  Auckland 
+//  New Zealand 
+// 
+//  (c) 2019 Media Design School 
+// 
+//  File Name   :   Bird.h
+//  Description :   Implementation for sprite class
+//  Author      :   Himanshu Chawla
+//  Mail        :   Himanshu.Cha8420@mediadesign.mail.nz 
+// 
+// Local Include
+
+
 #include "Bird.h"
 
 
@@ -11,7 +27,7 @@ b2Vec2 Bird::getTrajectoryPoint(b2Vec2& startingPosition, b2Vec2& startingVeloci
 	return startingPosition + n * stepVelocity + 0.5f * (n * n + n) * stepGravity;
 }
 
-
+//update
 void Bird::update(float _dT)
 {
 	b2Vec2 vel;
@@ -21,6 +37,7 @@ void Bird::update(float _dT)
 		alive = false;
 	}
 
+	//Ability apply
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && m_shoot && m_active)
 	{
 		switch (m_ability)
@@ -46,6 +63,7 @@ void Bird::update(float _dT)
 		}
 	}
 	
+	//path calculation
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !m_shoot)
 	{
 		
@@ -57,13 +75,13 @@ void Bird::update(float _dT)
 		m_path.clear();
 
 		b2Vec2 position;
-		if (abs(sf::Mouse::getPosition().x - sp.getPosition().x) < 128.0f && abs(sf::Mouse::getPosition().y - sp.getPosition().y) < 128.0f)
+		if (abs(sf::Mouse::getPosition().x - sp.getPosition().x) < 64.0f && abs(sf::Mouse::getPosition().y - sp.getPosition().y) < 64.0f)
 			m_canDo = true;
 
 		position = getBody()->GetPosition();
-		vel = b2Vec2((b2Vec2(sf::Mouse::getPosition().x /4.0f, sf::Mouse::getPosition().y / 4.0f) - position).x * 3.0f, (b2Vec2(sf::Mouse::getPosition().x/4.0f, sf::Mouse::getPosition().y/4.0f) - position).y * 3.0f);
+		vel = b2Vec2((b2Vec2(sf::Mouse::getPosition().x /4.0f, sf::Mouse::getPosition().y / 4.0f) - getBody()->GetPosition()).x * 3.0f, (b2Vec2(sf::Mouse::getPosition().x/4.0f, sf::Mouse::getPosition().y/4.0f) - getBody()->GetPosition()).y * 3.0f);
 
-		std::cout << vel.x << " " << vel.y << "\n";
+		//std::cout << vel.x << " " << vel.y << "\n";
 
 		b2RayCastCallback* raycastCallback = nullptr;
 		b2Vec2 lastTP = position;
@@ -75,24 +93,18 @@ void Bird::update(float _dT)
 			vel *= m_speed;
 		}
 		
+		if (vel.Length() > 1000.0f)
+		{
+			std::cout << "whyy";
+		}
 		if (m_canDo)
 		{
 			float t = -2 * vel.y / 9.81f;
 			//std::cout << t << "\n";
-			for (int i = 0; i < (int)(t * 60); i += 10)
+			for (int i = 0; i < (int)((t -  t   * 0.5f) * 60); i += 10)
 			{ // three seconds at 60fps
 				sprite* temp = new sprite(0.0f, 0.0f, "Path");
 				temp->setTexture("Assets/circle.png");
-
-				//if (i > 0) { //avoid degenerate raycast where start and end point are the same
-				//	m_world->RayCast(raycastCallback, lastTP, pos);
-				//	if (raycastCallback->ReportFixture(&groundBody->GetFixtureList()[0],b2Vec2( temp->sp.getPosition().x, temp->sp.getPosition().y), b2Vec2(0.0f, -1.0f), 0.0f) == 0) {
-				//		
-				//		break;
-				//	}
-				//}
-				//vel.Normalize();
-
 				b2Vec2 trajectoryPosition = getTrajectoryPoint(position, vel, i, getWorld());
 				temp->sp.setPosition(trajectoryPosition.x * 4.0f, trajectoryPosition.y * 4.0f);
 				m_path.push_back(temp);
@@ -101,6 +113,7 @@ void Bird::update(float _dT)
 		}
 	}
 
+	//shoot the bird on release
 	if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && m_canDo && !m_shoot)
 	{
 		for (auto i : m_path)
@@ -110,16 +123,33 @@ void Bird::update(float _dT)
 		}
 		m_path.clear();
 		//newBox->getBody()->SetLinearVelocity(b2Vec2(10.0f, newBox->getBody()->GetLinearVelocity().y));
-		if (vel.Length() > 15.0f && vel.Length() < 1000.0f)
+		if (vel.Length() > 5.0f && vel.Length() < 1000.0f)
 		{
 			m_shoot = true;
 			std::cout << vel.Length();
 			
 			getBody()->SetLinearVelocity(vel);
 		}
+		else if(vel.Length() > 1000.0f)
+		{
+			vel = b2Vec2((b2Vec2(sf::Mouse::getPosition().x / 4.0f, sf::Mouse::getPosition().y / 4.0f) - getBody()->GetPosition()).x * 3.0f, (b2Vec2(sf::Mouse::getPosition().x / 4.0f, sf::Mouse::getPosition().y / 4.0f) - getBody()->GetPosition()).y * 3.0f);
+
+			vel *= -1.0f;
+			if (vel.Length() > m_speed)
+			{
+				vel.Normalize();
+				vel *= m_speed;
+			}
+
+			m_shoot = true;
+			std::cout << vel.Length();
+
+			getBody()->SetLinearVelocity(vel);
+		}
 			m_canDo = false;
 	}
 
+	//update sprite pos
 	sp.setPosition(sf::Vector2f(getBody()->GetPosition().x * 4.0f, getBody()->GetPosition().y * 4.0f));
 	sp.setRotation(getBody()->GetAngle() * 180 / 3.14f);
 	

@@ -55,24 +55,7 @@ void sprite::draw(sf::RenderWindow& win)
 	}
 }
 
-sf::FloatRect sprite::getRect()
-{
-	return sf::FloatRect(x, y, w, h);
-}
 
-void sprite::option(std::string NAME, float SPEED = 0)
-{
-
-	Name = NAME;
-
-	dx = SPEED;
-
-}
-
-void sprite::revive()
-{
-	alive = true;
-}
 
 void sprite::destroy()
 {
@@ -83,8 +66,14 @@ sprite::~sprite()
 {
 }
 
-void sprite::init(b2World* world, const sf::Vector2f& position, const sf::Vector2f& dim, bool dynamic)
+
+//initialize box2d object
+void sprite::init(b2World* world, const sf::Vector2f& position, const sf::Vector2f& dim, bool dynamic, int _health)
 {
+	if (_health)
+	{
+		health = _health;
+	}
 	b2BodyDef bodyDef;
 	if(dynamic)
 		bodyDef.type = b2_dynamicBody;
@@ -107,6 +96,8 @@ void sprite::init(b2World* world, const sf::Vector2f& position, const sf::Vector
 	m_body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
 }
 
+
+//update sprite position
 void sprite::update()
 {
 	if (m_body->IsEnabled())

@@ -1,3 +1,19 @@
+// 
+//  Bachelor of Software Engineering 
+//  Media Design School 
+//  Auckland 
+//  New Zealand 
+// 
+//  (c) 2019 Media Design School 
+// 
+//  File Name   :   Bird.h
+//  Description :   Include for bird class
+//  Author      :   Himanshu Chawla
+//  Mail        :   Himanshu.Cha8420@mediadesign.mail.nz 
+// 
+// Local Include
+
+
 #pragma once
 #include "sprite.h"
 class Bird :

@@ -16,6 +16,7 @@
 
 #pragma once
 
+//Library includes
 #include<box2d/box2d.h>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
@@ -48,7 +49,8 @@ public:
     void option(std::string NAME, float SPEED);
     ~sprite();
 
-	void init(b2World* world, const sf::Vector2f& position, const sf::Vector2f& dim, bool dynamic);
+	void init(b2World* world, const sf::Vector2f& position, const sf::Vector2f& dim, bool dynamic, int health = 0);
+
 
 
 

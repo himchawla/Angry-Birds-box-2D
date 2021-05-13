@@ -1,5 +1,22 @@
 #pragma once
+
+// 
+//  Bachelor of Software Engineering 
+//  Media Design School 
+//  Auckland 
+//  New Zealand 
+// 
+//  (c) 2019 Media Design School 
+// 
+//  File Name   :   Enemy.h
+//  Description :   Include for Enemy class
+//  Author      :   Himanshu Chawla
+//  Mail        :   Himanshu.Cha8420@mediadesign.mail.nz 
+// 
+
+// Local Include
 #include "sprite.h"
+
 class Enemy :
 	public sprite
 {
